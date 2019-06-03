@@ -1,4 +1,6 @@
-from google.cloud.datastore.helpers import GeoPoint # https://googleapis.github.io/google-cloud-python/latest/index.html
+#from google.cloud.datastore.helpers import GeoPoint # https://googleapis.github.io/google-cloud-python/latest/index.html
+#from google.cloud.firestore_v1beta1 import GeoPoint
+from firebase_admin.firestore import GeoPoint
 from dataclasses import dataclass, field, InitVar, asdict
 from datetime import datetime
 
