@@ -73,6 +73,7 @@ class GpxProperties:
     max_speed: float = field(default=0, init=False)
     uphill: float = field(default=0, init=False) # (meters)
     downhill: float = field(default=0, init=False)
+    bounds: list = field(default_factory=list, init=False)
 
     # called from generated __init__
     def __post_init__(self, gpx_part):
@@ -94,6 +95,10 @@ class GpxProperties:
         self.max_speed = moving_data.max_speed * 3.6 #  converting m/s to km/h
 
         self.uphill, self.downhill = gpx_part.get_uphill_downhill()
+
+        bounds = gpx_part.get_bounds()
+        self.bounds = {'min': GeoPoint(bounds.min_latitude, bounds.min_longitude), \
+                        'max': GeoPoint(bounds.max_latitude, bounds.max_longitude)}
 
 @dataclass
 class Workout(GpxProperties):
