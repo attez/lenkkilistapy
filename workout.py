@@ -99,6 +99,7 @@ class GpxProperties:
 class Workout(GpxProperties):
     #gpx: InitVar[str] not needed, inherited, i guess?
     name: str
+    uid: str # user id for saving
     sport: str = None
     description: str = None
     # tracks

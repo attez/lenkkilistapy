@@ -4,12 +4,10 @@ import gpxpy
 #from google.cloud.firestore_v1beta1 import GeoPoint
 from firebase_admin.firestore import GeoPoint
 import firebase_admin
-from firebase_admin import firestore
+from firebase_admin import firestore, auth
 from workout import Workout, Track, Segment
 from flask import abort, jsonify
 from dataclasses import asdict
-
-
 
 
 def init_firebase():
@@ -34,7 +32,23 @@ def add_workout(request):
     """
 
 
-    # TODO: get auth and check it, save id
+    # get auth token
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        raise Exception('Missing auth header')
+    
+    try:
+        id_token = auth_header.split(" ")[1]
+    except IndexError:
+        raise Exception('Invalid auth header')
+    
+    try:
+        decoded_token = auth.verify_id_token(id_token) # not checking if revoked
+    except ValueError:
+        raise Exception('Invalid token')
+
+    uid = decoded_token['uid']
+
     # TODO: check file size
 
     name = request.form.get('name')
@@ -48,18 +62,21 @@ def add_workout(request):
     sport = request.form.get('sport')
     description = request.form.get('description')
 
-    # read and decode file because gpxpy cannot read file in binary mode
-    gpx_string = gpx_file.read().decode('utf-8')
-    gpx = gpxpy.parse(gpx_string)
-    workout = Workout(gpx, name)
-    if(not save_workout(workout)):
+    try:
+        # read and decode file because gpxpy cannot read file in binary mode
+        gpx_string = gpx_file.read().decode('utf-8')
+        gpx = gpxpy.parse(gpx_string)
+        workout = Workout(gpx, name, uid, sport=sport, description=description)
+    except Exception as e:
+        print(e)
+        raise # TODO: add own expetion
+
+    if (not save_workout(workout)):
         abort(make_error(400, 'saveFailed', 'Harjoituksen tallentaminen epäonnistui.'))
     
     #TODO: return 201 Created (and added object?) 
 
     return jsonify({'name': name, 'filename':gpx_file.filename})
-
-
 
 
 def make_error(status_code, error_code, message):
@@ -95,16 +112,21 @@ def save_workout(workout):
 
 
 
-
-
 init_firebase()
 
 # for local debugging
 if __name__ == "__main__":
     from flask import Flask, request
-    app = Flask(__name__)
+    from flask_cors import CORS
+    import logging
 
-    @app.route('/', methods=['GET', 'POST'])
+    logging.basicConfig(level=logging.DEBUG)
+    logging.getLogger('flask_cors').level = logging.DEBUG
+
+    app = Flask(__name__)
+    CORS(app) # default settings allow all cors requests
+
+    @app.route('/', methods=['POST'])
     def index():
         return add_workout(request)
 
