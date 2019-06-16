@@ -31,6 +31,8 @@ def add_workout(request):
         <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
     """
 
+    if(request.method != 'POST'):
+        raise Exception('Invalid request method.')
 
     # get auth token
     auth_header = request.headers.get('Authorization')
