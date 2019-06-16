@@ -69,7 +69,7 @@ def add_workout(request):
         workout = Workout(gpx, name, uid, sport=sport, description=description)
     except Exception as e:
         print(e)
-        raise # TODO: add own expetion
+        abort(make_error(400, 'fileInvalid', 'Virheellinen GPX-tiedosto.')) # TODO: add own expetion
 
     if (not save_workout(workout)):
         abort(make_error(400, 'saveFailed', 'Harjoituksen tallentaminen epäonnistui.'))
