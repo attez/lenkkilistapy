@@ -62,6 +62,14 @@ SEGMENT
     speeds: list 
 }
 
+*****
+
+UNITS:
+alitude: meters
+distance: meters
+time: seconds
+speed: m/s
+
 """
 @dataclass
 class GpxProperties:
@@ -72,15 +80,15 @@ class GpxProperties:
     # Also argument with default value set cannot be followed by non-default argument (from child class)
     start_time: datetime = field(default=None, init=False)
     end_time: datetime = field(default=None, init=False)
-    distance: float = field(default=0, init=False)  # (in km)
+    distance: float = field(default=0, init=False)  # (meters)
     moving_time: float = field(default=0, init=False) 
     stopped_time: float = field(default=0, init=False)
     total_time: float = field(default=0, init=False)
-    avg_with_stops: float = field(default=None, init=False)  # (km/h)
-    avg_without_stops: float = field(default=None, init=False)
-    max_speed: float = field(default=0, init=False)
+    avg_with_stops: float = field(default=None, init=False)  # (m/s)
+    avg_without_stops: float = field(default=None, init=False) # (m/s)
+    max_speed: float = field(default=0, init=False) # (m/s)
     uphill: float = field(default=0, init=False) # (meters)
-    downhill: float = field(default=0, init=False)
+    downhill: float = field(default=0, init=False) # (meters)
     bounds: list = field(default_factory=list, init=False)
 
     # called from generated __init__
@@ -100,7 +108,7 @@ class GpxProperties:
         # max speed is calculation is weird in gpxpy, uses too much filtering:
         # filters poinst where distance to previous point is more than 1.5 sd
         # if max value is wanted why filter them out, why not just smooth the track if needed???
-        self.max_speed = moving_data.max_speed * 3.6 #  converting m/s to km/h
+        self.max_speed = moving_data.max_speed
 
         self.uphill, self.downhill = gpx_part.get_uphill_downhill()
 
