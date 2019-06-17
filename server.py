@@ -1,5 +1,4 @@
 from functions.add_workout.main import add_workout
-#TODO: fix import, must use absolute import in main.py but then this is not working
 
 # When using the outside firebase project environment you need set up service account credentials
 # https://firebase.google.com/docs/admin/setup/
