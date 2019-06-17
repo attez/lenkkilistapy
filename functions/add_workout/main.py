@@ -11,15 +11,7 @@ from dataclasses import asdict
 
 
 def init_firebase():
-    # when using the outside firebase project environment you need set up service account credentials
-    # https://firebase.google.com/docs/admin/setup/
-    # Also set up config(?) https://firebase.google.com/docs/reference/admin/python/firebase_admin#initialize_app
-    #
-    # Windows Powershell
-    # $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\Atte\Documents\ERIKOIS\lenkkilista-firebase-adminsdk-yrla6-048b5c181c.json"
     app = firebase_admin.initialize_app()
-
-
 
 def add_workout(request):
     """ Parses a 'multipart/form-data' upload request

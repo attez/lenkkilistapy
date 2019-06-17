@@ -1,4 +1,11 @@
-from main import add_workout
+from functions.add_workout.main import add_workout
+#TODO: fix import, must use absolute import in main.py but then this is not working
+
+# When using the outside firebase project environment you need set up service account credentials
+# https://firebase.google.com/docs/admin/setup/
+# Also set up config(?) https://firebase.google.com/docs/reference/admin/python/firebase_admin#initialize_app
+# Windows Powershell
+# $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\Atte\Documents\ERIKOIS\lenkkilista-firebase-adminsdk-yrla6-048b5c181c.json"
 
 # for local debugging
 if __name__ == "__main__":
@@ -12,7 +19,7 @@ if __name__ == "__main__":
     app = Flask(__name__)
     CORS(app) # default settings allow all cors requests
 
-    @app.route('/', methods=['POST'])
+    @app.route('/addworkout', methods=['POST'])
     def index():
         return add_workout(request)
 
