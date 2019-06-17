@@ -1,4 +1,4 @@
-# lenkkilistpy
+# lenkkilistapy
 Google cloud function that can be used to calculate properties (distance, speed, elevation, ...) from GPX-files.
 Properties are saved to Firebase firestore. Uses gpxpy-library.
 
