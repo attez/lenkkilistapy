@@ -3,13 +3,14 @@ from firebase_admin.firestore import GeoPoint
 import firebase_admin
 from firebase_admin import firestore, auth
 from flask import abort, jsonify
-from flask import current_app as app
 from dataclasses import asdict
 
 from workout import Workout, Track, Segment
 
 
-""" Parses a 'multipart/form-data' upload request that contains information for a workout
+""" 
+    Entry point for the cloud function.
+    Parses a 'multipart/form-data' upload request that contains information for a workout
     including a gpx file. Workout is saved to Firestore database.
     Args:
         request (flask.Request): The request object.
@@ -24,8 +25,25 @@ def add_workout(request):
     except Exception as e:
         raise e # this will show up in google error reporting console
 
+""" 
+    Args:
+        request (flask.Request): The request object.
+        
+        Must be a POST request with a form data. 
+
+        Must contain Authorization header and valid Firebase user token.
+        
+        Formfields:
+        - name (required)
+        - file (required)
+        - sport
+        - description
+
+    Returns:
+        200 OK response if workout is added, otherwise raises InvalidUsage Exception
+"""
 def add_workout_to_firestore(request):
-    # headers and form
+    # headers and form data
     check_request_method(request, ['POST'])
     uid = get_uid(request)
     check_file_size(request)
@@ -126,7 +144,7 @@ def save_workout_to_firestore(workout):
 
 
 """
-Custom exception class that can contain detailed error information that can be return as response.
+Custom exception class that can contain detailed error information.
 Error object can be turned into Response with to_response.
 """
 class InvalidUsage(Exception):
